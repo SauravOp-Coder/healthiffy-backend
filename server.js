@@ -6,7 +6,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 require('dotenv').config();
 
-const Order = require('./models/Order'); 
+const Order = require('./models/order'); 
 
 const app = express();
 app.use(cors());
