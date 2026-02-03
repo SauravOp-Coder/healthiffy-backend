@@ -1,7 +1,7 @@
 // routes/admin.js
 const express = require('express');
 const router = express.Router();
-const Product = require('./models/Product');
+const Product = require('./models/product');
 
 // 1. ADD A NEW PRODUCT
 router.post('/add-product', async (req, res) => {

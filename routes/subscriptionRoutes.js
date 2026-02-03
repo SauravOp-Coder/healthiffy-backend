@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const SubscriptionRequest = require('../models/SubscriptionRequest');
-const User = require('../models/User');
+const User = require('../models/user');
 
 // CUSTOMER: Submit a receipt for a plan
 router.post('/request', async (req, res) => {
