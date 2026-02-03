@@ -9,7 +9,10 @@ require('dotenv').config();
 const Order = require('./models/order'); 
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: "*", // This MUST be a star or your exact Vercel URL
+  credentials: true
+}));
 app.use(express.json());
 
 const server = http.createServer(app); 
