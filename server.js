@@ -9,20 +9,28 @@ require('dotenv').config();
 const Order = require('./models/order'); 
 
 const app = express();
-app.use(cors({
-  origin: "*", // This MUST be a star or your exact Vercel URL
-  credentials: true
-}));
+app.use(cors());
 app.use(express.json());
 
 const server = http.createServer(app); 
 
+const allowedOrigins = [
+  "https://your-frontend-link.vercel.app", // Replace with your actual frontend URL
+  "http://localhost:3000" // Keep for local testing
+];
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true
+}));
+
 const io = new Server(server, {
   cors: {
-    origin: "*", // For testing, you can use "*" then change to your Vercel URL later
+    origin: allowedOrigins,
     methods: ["GET", "POST"]
   }
 });
+
 
 // --- MongoDB Connection ---
 mongoose.connect(process.env.MONGO_URI)
