@@ -22,8 +22,10 @@ router.post('/register', async (req, res) => {
         await user.save();
         res.status(201).json(user);
     } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+    console.error("CRITICAL REGISTRATION ERROR:", err.message);
+    console.error(err); // This will print the full technical reason in Render Logs
+    res.status(500).json({ error: err.message });
+}
 });
 
 // 2. LOGIN (For Admin, Staff, and Customers)
