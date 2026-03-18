@@ -4,33 +4,26 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const http = require('http');
 const { Server } = require('socket.io');
-require('dotenv').config();
 
 const Order = require('./models/order'); 
 
 const app = express();
-app.use(cors());
-app.use(express.json());
 
 const server = http.createServer(app); 
 
+// --- FIXED: Updated Origins ---
 const allowedOrigins = [
-  "https://your-frontend-link.vercel.app", // Replace with your actual frontend URL
-  "http://localhost:3000" // Keep for local testing
+  "https://healthiffy-frontend.vercel.app", // Use your REAL Vercel URL here
+  "http://localhost:3000"
 ];
 
+// Keep only ONE CORS declaration
 app.use(cors({
   origin: allowedOrigins,
   credentials: true
 }));
 
-const io = new Server(server, {
-  cors: {
-    origin: allowedOrigins,
-    methods: ["GET", "POST"]
-  }
-});
-
+app.use(express.json()); // Body parser must come after CORS
 
 // --- MongoDB Connection ---
 mongoose.connect(process.env.MONGO_URI)
@@ -48,50 +41,51 @@ app.get('/', (req, res) => {
   res.send("Cafe API is live and connected to DB!");
 });
 
+// --- FIXED: Global Error Handler ---
+// This will log the EXACT error to your Render console instead of just sending "500"
+app.use((err, req, res, next) => {
+  console.error("🔥 SERVER ERROR:", err.stack);
+  res.status(500).json({ 
+    message: "Internal Server Error", 
+    error: err.message 
+  });
+});
+
 // --- Socket.io Logic ---
+const io = new Server(server, {
+  cors: {
+    origin: allowedOrigins,
+    methods: ["GET", "POST"]
+  }
+});
+
 io.on('connection', (socket) => {
   console.log(`📡 New connection: ${socket.id}`);
 
-  // 1. Handle Payment Verification (The Handshake)
   socket.on('confirm-payment', (data) => {
     const { orderId, remainingCredits } = data;
-    console.log(`💰 Payment Verified for Order: ${orderId}`);
-    
-    // Alert only the specific customer that their payment is approved
     io.emit(`payment-verified-${orderId}`, { 
       status: 'success', 
       remainingCredits: remainingCredits 
     });
   });
 
-  // 2. Handle Real-Time Location Persistence
   socket.on('update-location', async (data) => {
     const { orderId, lat, lng } = data;
-    
     try {
       await Order.findByIdAndUpdate(orderId, {
-        location: {
-          lat: lat,
-          lng: lng,
-          updatedAt: new Date()
-        }
+        location: { lat, lng, updatedAt: new Date() }
       });
-
-      // Broadcast to Staff Dashboard
       io.emit('location-received', data);
-      
     } catch (err) {
-      console.error("❌ Error updating location in DB:", err);
+      console.error("❌ Error updating location:", err);
     }
   });
 
-  socket.on('disconnect', () => {
-    console.log('❌ User disconnected');
-  });
+  socket.on('disconnect', () => console.log('❌ User disconnected'));
 });
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
-
