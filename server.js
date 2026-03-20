@@ -49,6 +49,9 @@ app.use((err, req, res, next) => {
   });
 });
 
+const orderRoutes = require('./routes/orderRoutes')(io); // Pass io here
+app.use('/api/orders', orderRoutes);
+
 // --- Socket.io Logic ---
 const io = new Server(server, {
   cors: {
