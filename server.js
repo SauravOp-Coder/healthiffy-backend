@@ -15,7 +15,8 @@ const server = http.createServer(app);
 // --- Origins ---
 const allowedOrigins = [
   "https://healthiffy-frontend.vercel.app", 
-  "http://localhost:3000"
+  "http://localhost:3000",
+  'https://www.healthiffy.com'
 ];
 
 app.use(cors({
