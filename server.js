@@ -34,6 +34,9 @@ const io = new Server(server, {
   }
 });
 
+// --- UPI ID for payments ---
+const UPI_ID = "jagdaleomkar653-1@okaxis";
+
 // --- MongoDB Connection ---
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB Connected Successfully"))
@@ -65,6 +68,7 @@ io.on('connection', (socket) => {
       userName: data.userName,
       cart: data.cart,
       total: data.total,
+      upiId: UPI_ID,
       timestamp: new Date()
     });
   });

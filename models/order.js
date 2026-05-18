@@ -8,7 +8,8 @@ const OrderSchema = new mongoose.Schema({
   }],
   totalAmount: Number,
   totalCredits: Number,
-  paymentMethod: { type: String, enum: ['cash', 'credits'] },
+  paymentMethod: { type: String, enum: ['cash', 'credits', 'upi'] },
+  upiId: { type: String },
   status: { 
     type: String, 
     enum: ['pending', 'preparing', 'ready', 'out-for-delivery', 'delivered'],

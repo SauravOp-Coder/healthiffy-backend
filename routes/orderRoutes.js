@@ -4,6 +4,9 @@ const Order = require('../models/order');
 const User = require('../models/user');
 const Product = require('../models/product');
 
+// UPI id to show when UPI is chosen
+const UPI_ID = "jagdaleomkar653-1@okaxis";
+
 // NOTE: We wrap the router in a function so we can pass the 'io' instance from server.js
 module.exports = function(io) {
 
@@ -41,6 +44,7 @@ module.exports = function(io) {
                 totalAmount: totalCashNeeded,
                 totalCredits: totalCreditsNeeded,
                 paymentMethod: paymentMethod,
+                upiId: paymentMethod === 'upi' ? UPI_ID : null,
                 status: 'pending' 
             });
 
@@ -57,6 +61,7 @@ module.exports = function(io) {
             res.status(201).json({ 
                 message: "Order placed!", 
                 order: newOrder, 
+                upiId: newOrder.upiId || null,
                 remainingCredits: user.creditBalance 
             });
 
